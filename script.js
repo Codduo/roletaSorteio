@@ -6,11 +6,12 @@ const employees = [
     { name: "Alexander Nicolas Costa", photo: "colaboradores/ALEXANDER NICOLAS COSTA.jpg"},
     { name: "Bruna Aparecida Lukaski", photo: "colaboradores/BRUNA APARECIDA LUKASKI.jpg" },
     { name: "Camile Nunes", photo: "colaboradores/CAMILE NUNES.jpg" },
-    { name: "Eduarda Costa", photo: "semfoto" },
+    { name: "Rafael boa pergunta", photo: "semfoto" },
     { name: "Gabriely Holodivski", photo: "colaboradores/GABRIELY HOLODIVSKI.jpg" },
     { name: "Henrique Gerei", photo: "semfoto" },
     { name: "Hevilin Vitória Machado", photo: "colaboradores/HEVILIN VITÓRIA MACHADO.jpg" },
     { name: "Jaqueline Papirniak", photo: "colaboradores/JAQUELINE PAPIRNIAK.jpg" },
+    { name: "Liedson 30tou", photo: "semfoto" },
     { name: "Karen Sochodolak", photo: "colaboradores/KAREN SOCHODOLAK.jpg" },
     { name: "Maisa Bail", photo: "colaboradores/MAISA BAIL.jpg" },
     { name: "Margarete Dorak", photo: "colaboradores/MARGARETE DORAK.jpg" },
@@ -1196,4 +1197,5 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Inicializar
+
 init();
