@@ -1574,6 +1574,15 @@ function spinWheel() {
     hideResult();
     updateSpinButton();
     
+    // Parar qualquer momentum em andamento
+    if (momentumTimer) {
+        clearInterval(momentumTimer);
+        momentumTimer = null;
+        if (debugMode) {
+            console.log('🛑 Momentum interrompido por giro manual');
+        }
+    }
+    
     // Abrir tela cheia se não estiver aberta
     const overlay = document.getElementById('fullscreenOverlay');
     if (!overlay.classList.contains('show')) {
@@ -2022,6 +2031,11 @@ let isDragging = false;
 let startAngle = 0;
 let dragStartAngle = 0;
 let dragSensitivity = 0.01;
+let dragVelocity = 0;
+let lastDragTime = 0;
+let lastDragAngle = 0;
+let dragHistory = [];
+let momentumTimer = null;
 
 function addMouseDragEvents() {
     const canvas = document.getElementById('wheelCanvas');
@@ -2060,6 +2074,16 @@ function handleDragStart(e) {
     
     startAngle = Math.atan2(mouseY, mouseX);
     dragStartAngle = currentRotation;
+    lastDragAngle = startAngle;
+    lastDragTime = Date.now();
+    dragHistory = [];
+    dragVelocity = 0;
+    
+    // Parar qualquer momentum existente
+    if (momentumTimer) {
+        clearInterval(momentumTimer);
+        momentumTimer = null;
+    }
     
     e.target.style.cursor = 'grabbing';
     
@@ -2092,15 +2116,48 @@ function handleDragMove(e) {
     const mouseY = e.clientY - rect.top - centerY;
     
     const currentAngle = Math.atan2(mouseY, mouseX);
-    const angleDiff = currentAngle - startAngle;
+    const currentTime = Date.now();
     
-    // Aplicar rotação com sensibilidade ajustada
-    currentRotation = dragStartAngle + (angleDiff * dragSensitivity * 100);
+    // Calcular diferença angular
+    let angleDiff = currentAngle - lastDragAngle;
+    
+    // Normalizar diferença angular para evitar saltos de 2π
+    while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+    while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+    
+    // Calcular velocidade angular (radianos por ms)
+    const timeDiff = currentTime - lastDragTime;
+    if (timeDiff > 0) {
+        const velocity = angleDiff / timeDiff;
+        
+        // Adicionar ao histórico para calcular média
+        dragHistory.push({ velocity, time: currentTime });
+        
+        // Manter apenas os últimos 100ms de histórico
+        dragHistory = dragHistory.filter(entry => currentTime - entry.time < 100);
+        
+        // Calcular velocidade média
+        if (dragHistory.length > 0) {
+            dragVelocity = dragHistory.reduce((sum, entry) => sum + entry.velocity, 0) / dragHistory.length;
+        }
+    }
+    
+    // Aplicar rotação
+    const totalAngleDiff = currentAngle - startAngle;
+    currentRotation = dragStartAngle + (totalAngleDiff * 180 / Math.PI);
+    
+    // Atualizar valores para próxima iteração
+    lastDragAngle = currentAngle;
+    lastDragTime = currentTime;
     
     // Desenhar a roleta atualizada
     drawWheel();
     if (document.getElementById('fullscreenOverlay').classList.contains('show')) {
         drawFullscreenWheel();
+    }
+    
+    if (debugMode) {
+        console.log(`🖱️ Arrastando: ${currentRotation.toFixed(2)}° | Velocidade: ${(dragVelocity * 1000).toFixed(2)} rad/s`);
     }
 }
 
@@ -2120,14 +2177,81 @@ function handleDragEnd(e) {
     if (!isDragging) return;
     
     isDragging = false;
-    startAngle = 0;
-    dragStartAngle = 0;
-    
     e.target.style.cursor = 'grab';
     
-    if (debugMode) {
-        console.log('🖱️ Finalizando arrasto da roleta');
+    // Aplicar momentum baseado na velocidade de arrastar
+    const minVelocity = 0.001; // Velocidade mínima para iniciar momentum
+    const maxVelocity = 0.5;   // Velocidade máxima para evitar giros muito rápidos
+    
+    if (Math.abs(dragVelocity) > minVelocity) {
+        // Limitar velocidade máxima
+        let momentumVelocity = Math.max(-maxVelocity, Math.min(maxVelocity, dragVelocity));
+        
+        // Converter para graus por frame (assumindo 60fps)
+        momentumVelocity = momentumVelocity * (180 / Math.PI) * (1000 / 60);
+        
+        if (debugMode) {
+            console.log(`🚀 Iniciando momentum: ${momentumVelocity.toFixed(2)}°/frame`);
+        }
+        
+        // Iniciar animação de momentum
+        startMomentumSpin(momentumVelocity);
+    } else {
+        if (debugMode) {
+            console.log('🖱️ Finalizando arrasto - velocidade insuficiente para momentum');
+        }
     }
+    
+    // Reset valores
+    startAngle = 0;
+    dragStartAngle = 0;
+    dragVelocity = 0;
+    dragHistory = [];
+}
+
+// 🚀 FUNCIONALIDADE DE MOMENTUM APÓS ARRASTAR
+function startMomentumSpin(initialVelocity) {
+    if (momentumTimer) {
+        clearInterval(momentumTimer);
+    }
+    
+    let velocity = initialVelocity;
+    const friction = 0.98; // Fator de desaceleração (0.98 = 2% de redução por frame)
+    const minVelocity = 0.1; // Velocidade mínima antes de parar
+    
+    // Alterar cursor para indicar movimento
+    const canvas = document.getElementById('wheelCanvas');
+    const fullscreenCanvas = document.getElementById('fullscreenCanvas');
+    if (canvas) canvas.style.cursor = 'progress';
+    if (fullscreenCanvas) fullscreenCanvas.style.cursor = 'progress';
+    
+    momentumTimer = setInterval(() => {
+        // Aplicar rotação
+        currentRotation += velocity;
+        
+        // Desenhar roleta
+        drawWheel();
+        if (document.getElementById('fullscreenOverlay').classList.contains('show')) {
+            drawFullscreenWheel();
+        }
+        
+        // Aplicar fricção
+        velocity *= friction;
+        
+        // Parar quando velocidade fica muito baixa
+        if (Math.abs(velocity) < minVelocity) {
+            clearInterval(momentumTimer);
+            momentumTimer = null;
+            
+            // Restaurar cursor
+            if (canvas) canvas.style.cursor = 'grab';
+            if (fullscreenCanvas) fullscreenCanvas.style.cursor = 'grab';
+            
+            if (debugMode) {
+                console.log('🛑 Momentum finalizado');
+            }
+        }
+    }, 1000 / 60); // 60 FPS
 }
 
 // CSS dinâmico

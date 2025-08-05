@@ -582,7 +582,7 @@
 
         .winner-prize {
             font-size: 1.6em;
-            color: #4a5568;
+            color: #a1dd15;
             font-weight: 600;
         }
 
@@ -770,9 +770,9 @@
 
         .fullscreen-winner-prize {
             font-size: 2em;
-            color: #4a5568;
+            color: #e6de05;
             font-weight: 700;
-            text-shadow: 0 0 15px rgba(74, 85, 104, 0.8);
+            text-shadow: 0 0 15px rgba(218, 215, 10, 0.8);
         }
 
         .sound-controls {
