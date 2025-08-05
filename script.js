@@ -1,30 +1,30 @@
 // 🏢 Base de dados dos colaboradores BMZ
 const employees = [
-    { name: "Adriano Kolitski", photo: "colaboradores/ADRIANO KOLITSKI.jpg" },
-    { name: "Eduardo Sochodolak", photo: "colaboradores/EDUARDO SOCHODOLAK.jpg" },
-    { name: "Leonardo Marconato", photo: "" },
-    { name: "Alexander Nicolas Costa", photo: "colaboradores/ALEXANDER NICOLAS COSTA.jpg"},
-    { name: "Bruna Aparecida Lukaski", photo: "colaboradores/BRUNA APARECIDA LUKASKI.jpg" },
-    { name: "Camile Nunes", photo: "colaboradores/CAMILE NUNES.jpg" },
-    { name: "Rafael boa pergunta", photo: "semfoto" },
-    { name: "Gabriely Holodivski", photo: "colaboradores/GABRIELY HOLODIVSKI.jpg" },
-    { name: "Henrique Gerei", photo: "semfoto" },
-    { name: "Hevilin Vitória Machado", photo: "colaboradores/HEVILIN VITÓRIA MACHADO.jpg" },
-    { name: "Jaqueline Papirniak", photo: "colaboradores/JAQUELINE PAPIRNIAK.jpg" },
-    { name: "Liedson 30tou", photo: "semfoto" },
-    { name: "Karen Sochodolak", photo: "colaboradores/KAREN SOCHODOLAK.jpg" },
-    { name: "Maisa Bail", photo: "colaboradores/MAISA BAIL.jpg" },
-    { name: "Margarete Dorak", photo: "colaboradores/MARGARETE DORAK.jpg" },
-    { name: "Rodrigo Garbachevski", photo: "colaboradores/RODRIGO GARBACHEVSKI.jpg" },
-    { name: "Henrique Leite", photo: "colaboradores/HENRIQUE LEITE.jpg" },
-    { name: "Thamires Andrade", photo: "colaboradores/THAMIRES ANDRADE.jpg" },
-    { name: "Jamille C. Scheidt", photo: "colaboradores/JAMILLE C. SCHEIDT.jpg" },
-    { name: "Jéssica Riffel", photo: "colaboradores/JESSICA RIFFEL.png" },
-    { name: "Gisele Saplak", photo: "colaboradores/GISELE SAPLAK.jpg" },
-    { name: "Delia Ochoa", photo: "colaboradores/DELIA OCHOA.jpg" },
-    { name: "Kélita Schulz", photo: "colaboradores/KÉLITA SCHULZ.jpg" },
-    { name: "Maria Leticia", photo: "colaboradores/MARIA LETICIA.png" },
-    { name: "Lucas Racelli", photo: "colaboradores/LUCAS RACELLI.jpg" }
+    { name: "Adriano Kolitski", photo: "assets/colaboradores/ADRIANO KOLITSKI.jpg" },
+    { name: "Eduardo Sochodolak", photo: "assets/colaboradores/EDUARDO SOCHODOLAK.jpg" },
+    { name: "Leonardo Marconato", photo: "assets/colaboradores/Leonardo M.png" },
+    { name: "Alexander Nicolas Costa", photo: "assets/colaboradores/ALEXANDER NICOLAS COSTA.jpg"},
+    { name: "Bruna Aparecida Lukaski", photo: "assets/colaboradores/BRUNA APARECIDA LUKASKI.jpg" },
+    { name: "Camile Nunes", photo: "assets/colaboradores/CAMILE NUNES.jpg" },
+    { name: "Rafael boa pergunta", photo: "assets/colaboradores/Rafael.png" },
+    { name: "Gabriely Holodivski", photo: "assets/colaboradores/GABRIELY HOLODIVSKI.jpg" },
+    { name: "Henrique Gerei", photo: "assets/colaboradores/Henrique Gerei.png" },
+    { name: "Hevilin Vitória Machado", photo: "assets/colaboradores/HEVILIN VITÓRIA MACHADO.jpg" },
+    { name: "Jaqueline Papirniak", photo: "assets/colaboradores/JAQUELINE PAPIRNIAK.jpg" },
+    { name: "Liedson 30tou", photo: "assets/colaboradores/Liedson.png" },
+    { name: "Karen Sochodolak", photo: "assets/colaboradores/KAREN SOCHODOLAK.jpg" },
+    { name: "Maisa Bail", photo: "assets/colaboradores/MAISA BAIL.jpg" },
+    { name: "Margarete Dorak", photo: "assets/colaboradores/MARGARETE DORAK.jpg" },
+    { name: "Rodrigo Garbachevski", photo: "assets/colaboradores/RODRIGO GARBACHEVSKI.jpg" },
+    { name: "Henrique Leite", photo: "assets/colaboradores/HENRIQUE LEITE.jpg" },
+    { name: "Thamires Andrade", photo: "assets/colaboradores/THAMIRES ANDRADE.jpg" },
+    { name: "Jamille C. Scheidt", photo: "assets/colaboradores/JAMILLE C. SCHEIDT.jpg" },
+    { name: "Jéssica Riffel", photo: "assets/colaboradores/JESSICA RIFFEL.png" },
+    { name: "Gisele Saplak", photo: "assets/colaboradores/GISELE SAPLAK.jpg" },
+    { name: "Delia Ochoa", photo: "assets/colaboradores/DELIA OCHOA.jpg" },
+    { name: "Kélita Schulz", photo: "assets/colaboradores/KÉLITA SCHULZ.jpg" },
+    { name: "Maria Leticia", photo: "assets/colaboradores/MARIA LETICIA.png" },
+    { name: "Lucas Racelli", photo: "assets/colaboradores/LUCAS RACELLI.jpg" }
 ];
 
 let selectedEmployees = [];
@@ -77,50 +77,109 @@ const ctx = canvas.getContext('2d');
 const fullscreenCanvas = document.getElementById('fullscreenCanvas');
 const fullscreenCtx = fullscreenCanvas.getContext('2d');
 
-// 🔊 SISTEMA DE ÁUDIO SHOW DO MILHÃO COM MP3
+// 🔊 SISTEMA DE ÁUDIO MELHORADO COM MÚLTIPLAS OPÇÕES
 let audioContext;
 let soundEnabled = true;
 let spinAudio = null;
+let victoryAudio = null;
+let spinSoundOptions = [
+    { name: 'Opção 1', file: 'assets/sons/Opcao1.mp3', duration: 11 },
+    { name: 'Opção 2', file: 'assets/sons/Opcao2.mp3', duration: 11 },
+    { name: 'Opção 3', file: 'assets/sons/Opcao3.mp3', duration: 5 },
+    { name: 'Opção 4', file: 'assets/sons/Opcao4.mp3', duration: 8 }
+];
+let currentSpinSound = 0; // Índice do som atual
+let debugMode = false;
+let logoClickCount = 0;
+let logoClickTimer = null;
+let employeeOrder = 'random'; // 'random', 'alphabetic', 'reverse'
+let nextEmployeeName = '';
+let randomSoundEnabled = false; // Som aleatório a cada giro
 
 function initAudio() {
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // 🎵 Carregar o áudio do Show do Milhão
-        spinAudio = new Audio('show-do-milhao.mp3'); // Coloque o arquivo na pasta do projeto
-        spinAudio.volume = 0.7; // Volume ajustável
-        spinAudio.preload = 'auto';
+        // 🎵 Carregar áudios de giro
+        loadSpinAudios();
         
-        // Fallback caso o arquivo não carregue
-        spinAudio.addEventListener('error', () => {
-            console.log('❌ Não foi possível carregar show-do-milhao.mp3');
-            console.log('🔄 Usando áudio sintético como fallback');
-            spinAudio = null;
+        // 🏆 Carregar som de vitória
+        victoryAudio = new Audio('assets/sons/Vitoria.mp3');
+        victoryAudio.volume = 0.8;
+        victoryAudio.preload = 'auto';
+        
+        // Debug para áudio de vitória
+        victoryAudio.addEventListener('loadeddata', () => {
+            console.log('✅ Vitoria.mp3 carregado com sucesso');
+        });
+        
+        victoryAudio.addEventListener('error', (error) => {
+            console.log('❌ Erro ao carregar Vitoria.mp3:', error);
+            victoryAudio = null;
         });
         
     } catch (e) {
-        console.log('Áudio não suportado neste navegador');
+        if (debugMode) console.log('Áudio não suportado neste navegador');
     }
+}
+
+// 🎵 Carregar todos os áudios de giro
+let spinAudios = [];
+
+function loadSpinAudios() {
+    spinSoundOptions.forEach((option, index) => {
+        if (option.file) {
+            const audio = new Audio(option.file);
+            audio.volume = 0.7;
+            audio.preload = 'auto';
+            
+            audio.addEventListener('loadeddata', () => {
+                console.log(`✅ ${option.file} carregado com sucesso`);
+            });
+            
+            audio.addEventListener('error', (error) => {
+                console.log(`❌ Erro ao carregar ${option.file}:`, error);
+                spinAudios[index] = null;
+            });
+            
+            spinAudios[index] = audio;
+        } else {
+            spinAudios[index] = null;
+        }
+    });
 }
 
 function playSpinSound() {
     if (!soundEnabled) return;
     
-    // 🎵 TOCAR MP3 DO SHOW DO MILHÃO
-    if (spinAudio) {
+    // Se som aleatório está ativo, escolher um som aleatório
+    let soundIndex = currentSpinSound;
+    if (randomSoundEnabled) {
+        soundIndex = Math.floor(Math.random() * spinSoundOptions.length);
+        if (debugMode) console.log(`🎲 Som aleatório selecionado: ${spinSoundOptions[soundIndex].name}`);
+    }
+    
+    const selectedAudio = spinAudios[soundIndex];
+    
+    // Se tem arquivo MP3, tocar o arquivo
+    if (selectedAudio) {
         try {
-            spinAudio.currentTime = 0; // Resetar para o início
-            spinAudio.play().catch(error => {
-                console.log('Erro ao reproduzir áudio:', error);
-                playFallbackSpinSound(); // Usar som sintético como backup
+            selectedAudio.currentTime = 0;
+            selectedAudio.play().catch(error => {
+                if (debugMode) console.log('Erro ao reproduzir áudio:', error);
+                playFallbackSpinSound();
             });
         } catch (error) {
-            console.log('Erro no áudio MP3:', error);
+            if (debugMode) console.log('Erro no áudio MP3:', error);
             playFallbackSpinSound();
         }
     } else {
+        // Fallback para som sintético
         playFallbackSpinSound();
     }
+    
+    // Retornar o índice usado para cálculo de duração
+    return soundIndex;
 }
 
 // 🔄 ÁUDIO SINTÉTICO COMO FALLBACK
@@ -203,8 +262,238 @@ function playFallbackSpinSound() {
     setTimeout(createDramaticTick, 300);
 }
 
-function playWinSound() {
+// 🎵 VARIAÇÕES DE SONS SINTÉTICOS PARA ROLETA
+function playSpinSoundVariation(variation) {
     if (!soundEnabled || !audioContext) return;
+    
+    switch(variation) {
+        case 0: // Show do Milhão (fallback sintético)
+            playFallbackSpinSound();
+            break;
+        case 1: // Suspense Clássico
+            playClassicSuspenseSound();
+            break;
+        case 2: // Roda da Fortuna
+            playWheelOfFortuneSound();
+            break;
+        case 3: // Casino Royal
+            playCasinoRoyalSound();
+            break;
+        default:
+            playFallbackSpinSound();
+    }
+}
+
+function playClassicSuspenseSound() {
+    // Som de suspense mais simples e clássico
+    let tickCount = 0;
+    const totalTicks = 80;
+    
+    function createClassicTick() {
+        if (tickCount >= totalTicks) return;
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        const progress = tickCount / totalTicks;
+        const baseFreq = 400 + (progress * 400);
+        
+        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.8, audioContext.currentTime + 0.05);
+        
+        const volume = 0.015 + (progress * 0.02);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+        
+        oscillator.type = 'triangle';
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.05);
+        
+        tickCount++;
+        
+        const interval = 100 - (progress * 60); // 100ms para 40ms
+        setTimeout(createClassicTick, interval);
+    }
+    
+    setTimeout(createClassicTick, 200);
+}
+
+function playWheelOfFortuneSound() {
+    // Som similar ao programa Roda da Fortuna
+    let tickCount = 0;
+    const totalTicks = 120;
+    
+    // Som de fundo suave
+    const bgOsc = audioContext.createOscillator();
+    const bgGain = audioContext.createGain();
+    
+    bgOsc.connect(bgGain);
+    bgGain.connect(audioContext.destination);
+    
+    bgOsc.frequency.setValueAtTime(150, audioContext.currentTime);
+    bgOsc.frequency.linearRampToValueAtTime(300, audioContext.currentTime + 10);
+    bgGain.gain.setValueAtTime(0.01, audioContext.currentTime);
+    bgGain.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 8);
+    bgGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 10);
+    
+    bgOsc.type = 'sine';
+    bgOsc.start(audioContext.currentTime);
+    bgOsc.stop(audioContext.currentTime + 10);
+    
+    function createWheelTick() {
+        if (tickCount >= totalTicks) return;
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        const progress = tickCount / totalTicks;
+        const baseFreq = 800 + (progress * 400);
+        
+        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.6, audioContext.currentTime + 0.06);
+        
+        const volume = 0.02 + (progress * 0.015);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.06);
+        
+        oscillator.type = 'sawtooth';
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.06);
+        
+        tickCount++;
+        
+        let interval;
+        if (progress < 0.6) {
+            interval = 90 - (progress * 30); // 90ms para 60ms
+        } else {
+            interval = 60 - ((progress - 0.6) * 40); // 60ms para 20ms
+        }
+        
+        setTimeout(createWheelTick, interval);
+    }
+    
+    setTimeout(createWheelTick, 300);
+}
+
+function playCasinoRoyalSound() {
+    // Som premium estilo casino
+    let tickCount = 0;
+    const totalTicks = 150;
+    
+    // Acordes de fundo elegantes
+    const chords = [
+        [261.63, 329.63, 392.00], // C major
+        [293.66, 369.99, 440.00], // D major
+        [329.63, 415.30, 493.88]  // E major
+    ];
+    
+    chords.forEach((chord, index) => {
+        setTimeout(() => {
+            chord.forEach(freq => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                gain.gain.setValueAtTime(0.008, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3);
+                
+                osc.type = 'sine';
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + 3);
+            });
+        }, index * 2500);
+    });
+    
+    function createCasinoTick() {
+        if (tickCount >= totalTicks) return;
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        const progress = tickCount / totalTicks;
+        const baseFreq = 1000 + (progress * 800);
+        
+        oscillator.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, audioContext.currentTime + 0.04);
+        
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+        filter.Q.setValueAtTime(5, audioContext.currentTime);
+        
+        const volume = 0.025 + (progress * 0.02);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.04);
+        
+        oscillator.type = 'square';
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.04);
+        
+        tickCount++;
+        
+        let interval;
+        if (progress < 0.5) {
+            interval = 80 - (progress * 20); // 80ms para 60ms
+        } else if (progress < 0.8) {
+            interval = 60 - ((progress - 0.5) * 33); // 60ms para 40ms
+        } else {
+            interval = 40 - ((progress - 0.8) * 25); // 40ms para 15ms
+        }
+        
+        setTimeout(createCasinoTick, interval);
+    }
+    
+    setTimeout(createCasinoTick, 400);
+}
+
+function playWinSound() {
+    console.log('🏆 playWinSound chamado');
+    console.log('🔊 soundEnabled:', soundEnabled);
+    console.log('🎵 victoryAudio:', victoryAudio);
+    
+    if (!soundEnabled) {
+        console.log('❌ Som desabilitado');
+        return;
+    }
+    
+    if (!victoryAudio) {
+        console.log('❌ victoryAudio não carregado');
+        return;
+    }
+    
+    // 🏆 Tocar som de vitória MP3
+    try {
+        console.log('⏯️ Tentando reproduzir Vitoria.mp3...');
+        victoryAudio.currentTime = 0;
+        const playPromise = victoryAudio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('✅ Som de vitória iniciado com sucesso');
+            }).catch(error => {
+                console.log('❌ Erro ao reproduzir vitória MP3:', error);
+            });
+        }
+    } catch (error) {
+        console.log('💥 Erro no áudio de vitória:', error);
+    }
+}
+
+function playFallbackWinSound() {
+    if (!audioContext) return;
     
     // 🏆 FANFARRA ÉPICA DE VITÓRIA (Show do Milhão style)
     const fanfareNotes = [
@@ -227,7 +516,6 @@ function playWinSound() {
             
             osc.frequency.setValueAtTime(note.freq, audioContext.currentTime);
             
-            // Filtro passa-baixa para suavizar
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(note.freq * 2, audioContext.currentTime);
             
@@ -248,7 +536,6 @@ function playWinSound() {
                 const gain = audioContext.createGain();
                 const filter = audioContext.createBiquadFilter();
                 
-                // Criar ruído branco para simular bateria
                 const bufferSize = audioContext.sampleRate * 0.1;
                 const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
                 const data = buffer.getChannelData(0);
@@ -307,9 +594,17 @@ function toggleSound() {
     btn.textContent = soundEnabled ? '🔊' : '🔇';
     btn.classList.toggle('muted', !soundEnabled);
     
-    // Parar áudio se desligou o som
-    if (!soundEnabled && spinAudio && !spinAudio.paused) {
-        spinAudio.pause();
+    // Parar todos os áudios se desligou o som
+    if (!soundEnabled) {
+        spinAudios.forEach(audio => {
+            if (audio && !audio.paused) {
+                audio.pause();
+            }
+        });
+        
+        if (victoryAudio && !victoryAudio.paused) {
+            victoryAudio.pause();
+        }
     }
 }
 
@@ -320,9 +615,16 @@ function adjustVolume(value) {
     // Atualizar display
     document.getElementById('volumeDisplay').textContent = value + '%';
     
-    // Aplicar volume no áudio MP3
-    if (spinAudio) {
-        spinAudio.volume = volume;
+    // Aplicar volume em todos os áudios de giro
+    spinAudios.forEach(audio => {
+        if (audio) {
+            audio.volume = volume;
+        }
+    });
+    
+    // Aplicar volume no áudio de vitória
+    if (victoryAudio) {
+        victoryAudio.volume = volume;
     }
     
     // Salvar preferência do usuário
@@ -348,6 +650,14 @@ function openFullscreen() {
     
     // Desenhar roleta na tela cheia
     drawFullscreenWheel();
+    
+    // Atualizar exibição do próximo colaborador
+    updateNextEmployeeDisplay();
+}
+
+function openFullscreenManual() {
+    // Abrir tela cheia sem iniciar o giro automaticamente
+    openFullscreen();
 }
 
 function closeFullscreen() {
@@ -399,18 +709,14 @@ function drawFullscreenWheel() {
         fullscreenCtx.rotate(textAngle + Math.PI / 2);
         
         fullscreenCtx.fillStyle = '#e2e8f0';
-        fullscreenCtx.font = 'bold 16px Segoe UI';
+        fullscreenCtx.font = 'bold 20px Segoe UI';
         fullscreenCtx.textAlign = 'center';
         fullscreenCtx.shadowColor = 'rgba(0,0,0,0.8)';
         fullscreenCtx.shadowBlur = 3;
         
-        const firstName = participant.employee.name.split(' ')[0];
-        fullscreenCtx.fillText(firstName, 0, -8);
-        
-        fullscreenCtx.font = 'bold 12px Segoe UI';
         let prize = participant.prize;
-        if (prize.length > 15) prize = prize.substring(0, 15) + '...';
-        fullscreenCtx.fillText(prize, 0, 12);
+        if (prize.length > 18) prize = prize.substring(0, 18) + '...';
+        fullscreenCtx.fillText(prize, 0, 5);
         
         fullscreenCtx.restore();
     });
@@ -434,9 +740,300 @@ function showFullscreenResult(winner) {
     
     result.classList.add('show');
     
-    // Sons de vitória
+    // Som de vitória
     setTimeout(() => playWinSound(), 500);
-    setTimeout(() => playConfettiSound(), 1000);
+}
+
+// 🛠️ SISTEMA DE DEBUG SECRETO
+function handleLogoClick() {
+    logoClickCount++;
+    
+    // Resetar contador após 3 segundos se não chegar a 5 cliques
+    if (logoClickTimer) clearTimeout(logoClickTimer);
+    logoClickTimer = setTimeout(() => {
+        logoClickCount = 0;
+    }, 3000);
+    
+    if (logoClickCount >= 5) {
+        logoClickCount = 0;
+        if (logoClickTimer) clearTimeout(logoClickTimer);
+        toggleDebugMode();
+    }
+}
+
+function toggleDebugMode() {
+    debugMode = !debugMode;
+    
+    if (debugMode) {
+        showDebugPanel();
+        console.log('🛠️ Modo DEBUG ativado');
+    } else {
+        hideDebugPanel();
+        console.log('🛠️ Modo DEBUG desativado');
+    }
+}
+
+function showDebugPanel() {
+    // Remover painel existente se houver
+    const existingPanel = document.getElementById('debugPanel');
+    if (existingPanel) existingPanel.remove();
+    
+    const debugHTML = `
+        <div id="debugPanel" class="debug-panel">
+            <div class="debug-header">
+                <h3>🛠️ Painel de Debug BMZ</h3>
+                <button onclick="hideDebugPanel()">×</button>
+            </div>
+            <div class="debug-content">
+                <div class="debug-section">
+                    <h4>🔊 Configurações de Áudio</h4>
+                    <label>Som da Roleta:</label>
+                    <select id="debugSpinSound" onchange="changeSpinSound(this.value)">
+                        <option value="0" ${currentSpinSound === 0 ? 'selected' : ''}>🎵 Opção 1 (11s)</option>
+                        <option value="1" ${currentSpinSound === 1 ? 'selected' : ''}>🎵 Opção 2 (11s)</option>
+                        <option value="2" ${currentSpinSound === 2 ? 'selected' : ''}>🎵 Opção 3 (5s)</option>
+                        <option value="3" ${currentSpinSound === 3 ? 'selected' : ''}>🎵 Opção 4 (8s)</option>
+                    </select>
+                    <br><br>
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" id="randomSoundCheck" onchange="toggleRandomSound(this.checked)" ${randomSoundEnabled ? 'checked' : ''} style="margin-right: 8px;">
+                        🎲 Som Aleatório a Cada Giro
+                    </label>
+                    <button onclick="testSpinSound()" class="debug-btn">🎵 Testar Som</button>
+                    <button onclick="testVictorySound()" class="debug-btn">🏆 Testar Vitória</button>
+                </div>
+                
+                <div class="debug-section">
+                    <h4>🔧 Discord Webhook</h4>
+                    <input type="text" id="debugWebhook" placeholder="Cole a URL do webhook aqui..." value="${discordWebhookURL}">
+                    <button onclick="updateDiscordWebhook()" class="debug-btn">💾 Salvar</button>
+                    <button onclick="testDiscordWebhook()" class="debug-btn">📤 Testar</button>
+                </div>
+                
+                <div class="debug-section">
+                    <h4>📊 Informações do Sistema</h4>
+                    <div class="debug-info">
+                        <p><strong>Colaboradores selecionados:</strong> ${selectedEmployees.length}</p>
+                        <p><strong>Prêmios disponíveis:</strong> ${prizes.length}</p>
+                        <p><strong>Participantes gerados:</strong> ${participants.length}</p>
+                        <p><strong>Histórico de prêmios:</strong> ${prizeHistory.length}</p>
+                        <p><strong>Som habilitado:</strong> ${soundEnabled ? 'Sim' : 'Não'}</p>
+                        <p><strong>AudioContext:</strong> ${audioContext ? 'Ativo' : 'Inativo'}</p>
+                        <p><strong>Webhook configurado:</strong> ${discordWebhookURL ? 'Sim' : 'Não'}</p>
+                    </div>
+                </div>
+                
+                <div class="debug-section">
+                    <h4>🧹 Ações de Debug</h4>
+                    <button onclick="clearAllData()" class="debug-btn danger">🗑️ Limpar Tudo</button>
+                    <button onclick="exportDebugInfo()" class="debug-btn">📋 Exportar Log</button>
+                    <button onclick="simulateError()" class="debug-btn warning">⚠️ Simular Erro</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', debugHTML);
+}
+
+function hideDebugPanel() {
+    const panel = document.getElementById('debugPanel');
+    if (panel) panel.remove();
+    debugMode = false;
+}
+
+function changeSpinSound(soundIndex) {
+    currentSpinSound = parseInt(soundIndex);
+    localStorage.setItem('selectedSpinSound', currentSpinSound);
+    console.log(`🎵 Som alterado para: ${spinSoundOptions[currentSpinSound].name}`);
+}
+
+function testSpinSound() {
+    console.log('🎵 Testando som da roleta...');
+    playSpinSound();
+    
+    // Parar após 3 segundos ou duração do áudio
+    const selectedOption = spinSoundOptions[currentSpinSound];
+    const testDuration = Math.min(3000, (selectedOption.duration || 3) * 1000);
+    
+    setTimeout(() => {
+        const currentAudio = spinAudios[currentSpinSound];
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+    }, testDuration);
+}
+
+function testVictorySound() {
+    console.log('🏆 Testando som de vitória...');
+    playWinSound();
+}
+
+function toggleRandomSound(enabled) {
+    randomSoundEnabled = enabled;
+    localStorage.setItem('randomSoundEnabled', randomSoundEnabled);
+    
+    if (debugMode) {
+        console.log(`🎲 Som aleatório ${enabled ? 'ativado' : 'desativado'}`);
+    }
+}
+
+function updateDiscordWebhook() {
+    const newWebhook = document.getElementById('debugWebhook').value.trim();
+    if (newWebhook && newWebhook.includes('discord.com/api/webhooks/')) {
+        discordWebhookURL = newWebhook;
+        localStorage.setItem('discordWebhook', discordWebhookURL);
+        updateDiscordButton();
+        console.log('✅ Webhook do Discord atualizado');
+        alert('✅ Webhook configurado com sucesso!');
+    } else if (newWebhook === '') {
+        discordWebhookURL = '';
+        localStorage.removeItem('discordWebhook');
+        updateDiscordButton();
+        console.log('🗑️ Webhook removido');
+        alert('🗑️ Webhook removido');
+    } else {
+        console.error('❌ URL de webhook inválida');
+        alert('❌ URL inválida! Deve ser um webhook do Discord.');
+    }
+}
+
+function testDiscordWebhook() {
+    if (!discordWebhookURL) {
+        alert('❌ Configure um webhook primeiro!');
+        return;
+    }
+    
+    console.log('📤 Testando webhook do Discord...');
+    
+    const testPayload = {
+        username: "Teste BMZ Debug 🛠️",
+        avatar_url: "https://cdn-icons-png.flaticon.com/512/2006/2006249.png",
+        embeds: [{
+            title: "🧪 Teste de Webhook",
+            description: "Este é um teste do sistema de debug da Roleta BMZ.",
+            color: 0x00ff00,
+            fields: [{
+                name: "Status",
+                value: "✅ Webhook funcionando corretamente!",
+                inline: false
+            }],
+            footer: {
+                text: "Sistema de Debug BMZ",
+                icon_url: "https://cdn-icons-png.flaticon.com/512/2995/2995463.png"
+            },
+            timestamp: new Date().toISOString()
+        }]
+    };
+    
+    fetch(discordWebhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testPayload)
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('✅ Teste de webhook bem-sucedido');
+            alert('✅ Teste enviado com sucesso! Verifique o Discord.');
+        } else {
+            console.error('❌ Erro no teste de webhook:', response.status);
+            alert(`❌ Erro ${response.status}: Verifique o webhook.`);
+        }
+    })
+    .catch(error => {
+        console.error('🔌 Erro de conexão:', error);
+        alert('🔌 Falha na conexão com o Discord.');
+    });
+}
+
+function clearAllData() {
+    if (confirm('⚠️ Isso irá limpar TODOS os dados (colaboradores, prêmios, histórico). Continuar?')) {
+        selectedEmployees = [];
+        prizes = [];
+        participants = [];
+        prizeHistory = [];
+        currentRotation = 0;
+        
+        // Limpar interface
+        document.querySelectorAll('.employee-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        updatePrizesList();
+        updateParticipants();
+        updatePrizeHistoryDisplay();
+        updateDisplay();
+        
+        console.log('🧹 Todos os dados foram limpos');
+        alert('🧹 Dados limpos com sucesso!');
+    }
+}
+
+function exportDebugInfo() {
+    const debugInfo = {
+        timestamp: new Date().toISOString(),
+        system: {
+            selectedEmployees: selectedEmployees.length,
+            prizes: prizes.length,
+            participants: participants.length,
+            prizeHistory: prizeHistory.length,
+            soundEnabled: soundEnabled,
+            currentSpinSound: spinSoundOptions[currentSpinSound].name,
+            webhookConfigured: !!discordWebhookURL,
+            debugMode: debugMode
+        },
+        data: {
+            selectedEmployees: selectedEmployees,
+            prizes: prizes,
+            prizeHistory: prizeHistory
+        },
+        errors: JSON.parse(localStorage.getItem('bmzErrors') || '[]')
+    };
+    
+    const blob = new Blob([JSON.stringify(debugInfo, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `bmz-debug-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    console.log('📋 Informações de debug exportadas');
+}
+
+function simulateError() {
+    const errorMsg = `Erro simulado em ${new Date().toISOString()}`;
+    console.error('⚠️ ' + errorMsg);
+    logError('SIMULATED', errorMsg);
+    alert('⚠️ Erro simulado registrado no console e no log.');
+}
+
+function logError(type, message, details = null) {
+    const error = {
+        timestamp: new Date().toISOString(),
+        type: type,
+        message: message,
+        details: details,
+        url: window.location.href,
+        userAgent: navigator.userAgent
+    };
+    
+    const errors = JSON.parse(localStorage.getItem('bmzErrors') || '[]');
+    errors.push(error);
+    
+    // Manter apenas os últimos 50 erros
+    if (errors.length > 50) {
+        errors.splice(0, errors.length - 50);
+    }
+    
+    localStorage.setItem('bmzErrors', JSON.stringify(errors));
+    
+    if (debugMode) {
+        console.error('🐛 Erro registrado:', error);
+    }
 }
 
 // 🚀 Inicialização
@@ -446,7 +1043,43 @@ function init() {
     updateDisplay();
     updateDiscordButton(); // Verificar se webhook já está configurado
     loadSavedVolume(); // Carregar volume salvo
-    console.log('🎯 Roleta BMZ inicializada');
+    
+    // Carregar configuração de som salva
+    const savedSpinSound = localStorage.getItem('selectedSpinSound');
+    if (savedSpinSound !== null) {
+        currentSpinSound = parseInt(savedSpinSound);
+    }
+    
+    // Carregar ordem dos colaboradores salva
+    const savedOrder = localStorage.getItem('employeeOrder');
+    if (savedOrder) {
+        employeeOrder = savedOrder;
+    }
+    
+    // Carregar configuração de som aleatório
+    const savedRandomSound = localStorage.getItem('randomSoundEnabled');
+    if (savedRandomSound !== null) {
+        randomSoundEnabled = savedRandomSound === 'true';
+    }
+    
+    // Sincronizar seletor da interface
+    const orderSelector = document.getElementById('employeeOrderSelect');
+    
+    if (orderSelector) {
+        orderSelector.value = employeeOrder;
+    }
+    
+    // Adicionar evento de clique na logo
+    const logo = document.querySelector('.logo-placeholder');
+    if (logo) {
+        logo.addEventListener('click', handleLogoClick);
+        logo.style.cursor = 'pointer';
+    }
+    
+    // Adicionar eventos de arrasto com mouse
+    addMouseDragEvents();
+    
+    console.log('🎯 Roleta BMZ inicializada com todas as funcionalidades');
 }
 
 // 📋 Gerenciamento de abas
@@ -477,19 +1110,152 @@ function loadEmployees() {
     });
 }
 
-// ✅ Seleção de colaboradores
+// ✅ Seleção de colaboradores (APENAS UM POR VEZ)
 function toggleEmployee(index) {
     const card = document.querySelectorAll('.employee-card')[index];
     
     if (selectedEmployees.includes(index)) {
-        selectedEmployees = selectedEmployees.filter(i => i !== index);
+        // Desselecionar o colaborador atual
+        selectedEmployees = [];
         card.classList.remove('selected');
     } else {
-        selectedEmployees.push(index);
+        // Desselecionar todos os outros primeiro
+        document.querySelectorAll('.employee-card').forEach(c => c.classList.remove('selected'));
+        selectedEmployees = [index];
         card.classList.add('selected');
     }
     
     updateParticipants();
+}
+
+// 🎲 Seleção automática do próximo colaborador baseada na ordem escolhida
+function selectNextEmployee() {
+    if (employees.length === 0) return;
+    
+    let sortedEmployees = [...employees];
+    
+    // Ordenar baseado na configuração
+    switch(employeeOrder) {
+        case 'alphabetic':
+            sortedEmployees.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'reverse':
+            sortedEmployees.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+        case 'random':
+        default:
+            // Para ordem aleatória, remover quem já ganhou até todos ganharem
+            const allWinners = prizeHistory.map(entry => entry.name);
+            const availableEmployees = sortedEmployees.filter(emp => !allWinners.includes(emp.name));
+            
+            // Se todos já ganharam, resetar e permitir todos novamente
+            if (availableEmployees.length === 0) {
+                console.log('🔄 Todos colaboradores já ganharam - resetando lista');
+                sortedEmployees = [...employees];
+            } else {
+                sortedEmployees = availableEmployees;
+            }
+            break;
+    }
+    
+    let selectedEmployee;
+    
+    if (employeeOrder === 'random') {
+        selectedEmployee = sortedEmployees[Math.floor(Math.random() * sortedEmployees.length)];
+    } else {
+        // Para ordem alfabética, pegar o próximo após o atual ou o primeiro
+        const currentIndex = selectedEmployees.length > 0 ? selectedEmployees[0] : -1;
+        const currentName = currentIndex !== -1 ? employees[currentIndex].name : '';
+        const currentSortedIndex = sortedEmployees.findIndex(emp => emp.name === currentName);
+        const nextIndex = currentSortedIndex !== -1 ? (currentSortedIndex + 1) % sortedEmployees.length : 0;
+        selectedEmployee = sortedEmployees[nextIndex];
+    }
+    
+    const employeeIndex = employees.findIndex(emp => emp.name === selectedEmployee.name);
+    
+    if (employeeIndex !== -1) {
+        // Desselecionar atual
+        document.querySelectorAll('.employee-card').forEach(c => c.classList.remove('selected'));
+        
+        // Selecionar o novo
+        selectedEmployees = [employeeIndex];
+        document.querySelectorAll('.employee-card')[employeeIndex].classList.add('selected');
+        
+        updateParticipants();
+        nextEmployeeName = selectedEmployee.name;
+        updateNextEmployeeDisplay();
+        
+        if (debugMode) {
+            console.log(`🎲 Próximo colaborador selecionado (${employeeOrder}): ${selectedEmployee.name}`);
+        }
+        
+        return selectedEmployee.name;
+    }
+}
+
+// Função compatível com o antigo nome
+function selectRandomEmployee() {
+    return selectNextEmployee();
+}
+
+// 📋 Atualizar exibição do próximo colaborador
+function updateNextEmployeeDisplay() {
+    const display = document.getElementById('nextEmployeeDisplay');
+    if (display && nextEmployeeName && selectedEmployees.length > 0) {
+        display.textContent = `👤 Próximo a Rodar: ${nextEmployeeName}`;
+        display.style.display = 'block';
+    } else if (display) {
+        display.style.display = 'none';
+    }
+}
+
+// 🔄 Alterar ordem dos colaboradores
+function changeEmployeeOrder(order) {
+    employeeOrder = order;
+    localStorage.setItem('employeeOrder', employeeOrder);
+    
+    if (debugMode) {
+        console.log(`📋 Ordem dos colaboradores alterada para: ${employeeOrder}`);
+    }
+    
+    // Se tem colaborador selecionado, mostrar o próximo baseado na nova ordem
+    if (selectedEmployees.length > 0 && prizes.length > 0) {
+        const currentName = employees[selectedEmployees[0]].name;
+        nextEmployeeName = getNextEmployeeName(currentName);
+        updateNextEmployeeDisplay();
+    }
+}
+
+// 📋 Obter próximo colaborador baseado na ordem
+function getNextEmployeeName(currentName) {
+    if (employees.length === 0) return '';
+    
+    let sortedEmployees = [...employees];
+    
+    switch(employeeOrder) {
+        case 'alphabetic':
+            sortedEmployees.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'reverse':
+            sortedEmployees.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+        case 'random':
+        default:
+            // Para ordem aleatória, remover quem já ganhou
+            const allWinners = prizeHistory.map(entry => entry.name);
+            const availableEmployees = sortedEmployees.filter(emp => !allWinners.includes(emp.name));
+            
+            if (availableEmployees.length === 0) {
+                // Se todos ganharam, usar todos
+                return sortedEmployees[Math.floor(Math.random() * sortedEmployees.length)].name;
+            } else {
+                return availableEmployees[Math.floor(Math.random() * availableEmployees.length)].name;
+            }
+    }
+    
+    const currentIndex = sortedEmployees.findIndex(emp => emp.name === currentName);
+    const nextIndex = currentIndex !== -1 ? (currentIndex + 1) % sortedEmployees.length : 0;
+    return sortedEmployees[nextIndex].name;
 }
 
 // 🎁 Gerenciamento de prêmios
@@ -630,6 +1396,16 @@ function updateParticipants() {
         });
     });
     
+    // Atualizar próximo colaborador se há prêmios
+    if (selectedEmployees.length > 0 && prizes.length > 0) {
+        const currentName = employees[selectedEmployees[0]].name;
+        nextEmployeeName = getNextEmployeeName(currentName);
+        updateNextEmployeeDisplay();
+    } else {
+        nextEmployeeName = '';
+        updateNextEmployeeDisplay();
+    }
+    
     updateDisplay();
 }
 
@@ -710,18 +1486,14 @@ function drawWheel() {
         ctx.rotate(textAngle + Math.PI / 2);
         
         ctx.fillStyle = '#e2e8f0';
-        ctx.font = 'bold 11px Segoe UI';
+        ctx.font = 'bold 13px Segoe UI';
         ctx.textAlign = 'center';
         ctx.shadowColor = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 2;
         
-        const firstName = participant.employee.name.split(' ')[0];
-        ctx.fillText(firstName, 0, -5);
-        
-        ctx.font = 'bold 9px Segoe UI';
         let prize = participant.prize;
-        if (prize.length > 12) prize = prize.substring(0, 12) + '...';
-        ctx.fillText(prize, 0, 8);
+        if (prize.length > 15) prize = prize.substring(0, 15) + '...';
+        ctx.fillText(prize, 0, 2);
         
         ctx.restore();
     });
@@ -761,10 +1533,14 @@ function updateParticipantsList() {
 // 🔧 CORREÇÃO: Agora verifica PRÊMIOS ao invés de participantes
 function updateSpinButton() {
     const btn = document.getElementById('spinBtn');
+    const fullscreenBtn = document.getElementById('fullscreenSpinBtn');
     const hasEmployees = selectedEmployees.length > 0;
     const hasPrizes = prizes.length >= 2; // 🎯 CORRIGIDO: Pelo menos 2 prêmios
     
-    btn.disabled = !hasEmployees || !hasPrizes || isSpinning;
+    const canSpin = hasEmployees && hasPrizes && !isSpinning;
+    
+    // Botão principal
+    btn.disabled = !canSpin;
     
     if (!hasEmployees) {
         btn.textContent = '🎯 SELECIONE PELO MENOS 1 COLABORADOR';
@@ -774,6 +1550,16 @@ function updateSpinButton() {
         btn.textContent = '🌀 GIRANDO...';
     } else {
         btn.textContent = '🎯 GIRAR ROLETA';
+    }
+    
+    // Botão da tela cheia
+    if (fullscreenBtn) {
+        fullscreenBtn.disabled = !canSpin;
+        if (isSpinning) {
+            fullscreenBtn.textContent = '🌀 Girando...';
+        } else {
+            fullscreenBtn.textContent = '🎯 Girar';
+        }
     }
 }
 
@@ -788,23 +1574,28 @@ function spinWheel() {
     hideResult();
     updateSpinButton();
     
-    // Abrir tela cheia
-    openFullscreen();
+    // Abrir tela cheia se não estiver aberta
+    const overlay = document.getElementById('fullscreenOverlay');
+    if (!overlay.classList.contains('show')) {
+        openFullscreen();
+    }
     
     // Adicionar classe de animação
-    const overlay = document.getElementById('fullscreenOverlay');
     overlay.classList.add('spinning');
     
-    // 🎵 Tocar som do Show do Milhão (início imediato)
-    playSpinSound();
+    // 🎵 Tocar som (pode ser aleatório)
+    const usedSoundIndex = playSpinSound();
     
-    const minSpins = 8;  // Mais voltas para 10 segundos
+    const minSpins = 8;  // Mais voltas para duração variável
     const maxSpins = 12;
     const spins = minSpins + Math.random() * (maxSpins - minSpins);
     const finalAngle = Math.random() * 2 * Math.PI;
     const totalRotation = spins * 2 * Math.PI + finalAngle;
     
-    const duration = 10000; // 🎯 EXATAMENTE 10 SEGUNDOS
+    // 🎯 Usar duração do áudio que está realmente tocando
+    const actualSoundIndex = usedSoundIndex !== undefined ? usedSoundIndex : currentSpinSound;
+    const selectedOption = spinSoundOptions[actualSoundIndex];
+    const duration = (selectedOption.duration || 10) * 1000;
     const startTime = Date.now();
     const startRotation = currentRotation;
     
@@ -830,9 +1621,10 @@ function spinWheel() {
             updateSpinButton();
             
             // 🎵 Parar o áudio caso ainda esteja tocando
-            if (spinAudio) {
-                spinAudio.pause();
-                spinAudio.currentTime = 0;
+            const currentAudio = spinAudios[actualSoundIndex];
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
             
             // Remover classe de animação
@@ -896,13 +1688,29 @@ function showResult(winner) {
     updatePrizeHistoryDisplay();
     result.classList.add('show');
     createConfetti();
+    
+    // 🎲 Selecionar automaticamente o próximo colaborador após 3 segundos
+    if (prizes.length > 0) {
+        setTimeout(() => {
+            const nextEmployee = selectNextEmployee();
+            if (nextEmployee && debugMode) {
+                console.log(`🎲 Próximo colaborador selecionado: ${nextEmployee}`);
+            }
+        }, 3000);
+    }
 }
 
 function hideResult() {
     const result = document.getElementById('result');
     const photo = document.getElementById('winnerPhoto');
+    const fullscreenResult = document.getElementById('fullscreenResult');
+    
     result.classList.remove('show');
     photo.classList.remove('show');
+    
+    if (fullscreenResult) {
+        fullscreenResult.classList.remove('show');
+    }
 }
 
 // 🎊 Confetti elegante
@@ -1070,103 +1878,256 @@ function downloadReport() {
     alert(`📄 Relatório baixado: ${fileName}`);
 }
 
-// 🔄 FUNÇÃO SEGURA PARA DISCORD (SEM WEBHOOK EXPOSTO)
+// 🔄 FUNÇÃO SEGURA PARA DISCORD (COM TRATAMENTO DE ERROS)
 function exportarParaDiscord() {
-    if (!discordWebhookURL) {
-        configureDiscordWebhook();
-        return;
-    }
-    
-    if (prizeHistory.length === 0) {
-        alert("📋 Nenhum prêmio para exportar.");
-        return;
-    }
-
-    const currentDate = new Date();
-    const dateString = currentDate.toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    });
-    const timeString = currentDate.toLocaleTimeString('pt-BR', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    });
-
-    // 🎯 Formatação rica para Discord
-    const embed = {
-        title: "🏆 Sorteio BMZ - Resultados Oficiais",
-        description: `📅 **Data:** ${dateString}\n🕐 **Horário:** ${timeString}\n\n🎯 **Total de prêmios sorteados:** ${prizeHistory.length}`,
-        color: 0x4a5568, // Cor azul-acinzentado elegante
-        thumbnail: {
-            url: "https://cdn-icons-png.flaticon.com/512/9028/9028011.png" // Ícone de troféu
-        },
-        fields: [],
-        footer: {
-            text: "Sistema de Sorteios BMZ • Operacional",
-            icon_url: "https://cdn-icons-png.flaticon.com/512/2995/2995463.png"
-        },
-        timestamp: new Date().toISOString()
-    };
-
-    // Adicionar cada vencedor como um field
-    prizeHistory.forEach((entry, index) => {
-        embed.fields.push({
-            name: `${index + 1}º Lugar 🥇`,
-            value: `👤 **${entry.name}**\n🎁 *${entry.prize}*`,
-            inline: true
-        });
-    });
-
-    // Se houver muitos prêmios, fazer uma versão condensada
-    if (prizeHistory.length > 10) {
-        embed.fields = []; // Limpar fields
+    try {
+        if (!discordWebhookURL) {
+            configureDiscordWebhook();
+            return;
+        }
         
-        let winners = "";
-        prizeHistory.forEach((entry, index) => {
-            winners += `**${index + 1}.** ${entry.name} → *${entry.prize}*\n`;
+        if (prizeHistory.length === 0) {
+            alert("📋 Nenhum prêmio para exportar.");
+            return;
+        }
+
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString('pt-BR', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        const timeString = currentDate.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
         });
 
+        // 🎯 Formatação rica para Discord
+        const embed = {
+            title: "🏆 Sorteio BMZ - Resultados Oficiais",
+            description: `📅 **Data:** ${dateString}\n🕐 **Horário:** ${timeString}\n\n🎯 **Total de prêmios sorteados:** ${prizeHistory.length}`,
+            color: 0x4a5568,
+            thumbnail: {
+                url: "https://cdn-icons-png.flaticon.com/512/9028/9028011.png"
+            },
+            fields: [],
+            footer: {
+                text: "Sistema de Sorteios BMZ • Operacional",
+                icon_url: "https://cdn-icons-png.flaticon.com/512/2995/2995463.png"
+            },
+            timestamp: new Date().toISOString()
+        };
+
+        // Adicionar cada vencedor como um field
+        prizeHistory.forEach((entry, index) => {
+            embed.fields.push({
+                name: `${index + 1}º Lugar 🥇`,
+                value: `👤 **${entry.name}**\n🎁 *${entry.prize}*`,
+                inline: true
+            });
+        });
+
+        // Se houver muitos prêmios, fazer uma versão condensada
+        if (prizeHistory.length > 10) {
+            embed.fields = [];
+            
+            let winners = "";
+            prizeHistory.forEach((entry, index) => {
+                winners += `**${index + 1}.** ${entry.name} → *${entry.prize}*\n`;
+            });
+
+            embed.fields.push({
+                name: "🎊 Lista Completa de Vencedores",
+                value: winners,
+                inline: false
+            });
+        }
+
+        // Adicionar estatísticas
+        const uniqueWinners = [...new Set(prizeHistory.map(entry => entry.name))];
         embed.fields.push({
-            name: "🎊 Lista Completa de Vencedores",
-            value: winners,
+            name: "📊 Estatísticas",
+            value: `👥 **Pessoas contempladas:** ${uniqueWinners.length}\n🎁 **Total de prêmios:** ${prizeHistory.length}\n🎯 **Sorteio realizado com sucesso!**`,
             inline: false
         });
-    }
 
-    // Adicionar estatísticas
-    const uniqueWinners = [...new Set(prizeHistory.map(entry => entry.name))];
-    embed.fields.push({
-        name: "📊 Estatísticas",
-        value: `👥 **Pessoas contempladas:** ${uniqueWinners.length}\n🎁 **Total de prêmios:** ${prizeHistory.length}\n🎯 **Sorteio realizado com sucesso!**`,
-        inline: false
-    });
+        const payload = {
+            username: "Roleta BMZ 🎯",
+            avatar_url: "https://cdn-icons-png.flaticon.com/512/2006/2006249.png",
+            embeds: [embed]
+        };
 
-    const payload = {
-        username: "Roleta BMZ 🎯",
-        avatar_url: "https://cdn-icons-png.flaticon.com/512/2006/2006249.png",
-        embeds: [embed]
-    };
-
-    fetch(discordWebhookURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (response.ok) {
-            alert("✅ Histórico enviado para o Discord com sucesso!\n🎊 Confira o canal para ver os resultados formatados.");
-        } else {
-            alert("❌ Erro ao enviar para o Discord. Verifique o webhook.");
+        if (debugMode) {
+            console.log('📤 Enviando para Discord:', payload);
         }
-    })
-    .catch(error => {
-        console.error("Erro ao enviar webhook:", error);
-        alert("🔌 Falha na conexão com o Discord.");
+
+        fetch(discordWebhookURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.ok) {
+                if (debugMode) {
+                    console.log('✅ Exportação para Discord bem-sucedida');
+                }
+                alert("✅ Histórico enviado para o Discord com sucesso!\n🎊 Confira o canal para ver os resultados formatados.");
+            } else {
+                const errorMsg = `Erro HTTP ${response.status}: ${response.statusText}`;
+                logError('DISCORD_EXPORT', errorMsg, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: discordWebhookURL.substring(0, 50) + '...'
+                });
+                
+                if (debugMode) {
+                    console.error('❌ Erro na exportação:', errorMsg);
+                }
+                
+                alert(`❌ Erro ao enviar para o Discord (${response.status}).\nVerifique o webhook no painel de debug.`);
+            }
+        })
+        .catch(error => {
+            logError('DISCORD_NETWORK', 'Falha na conexão com Discord', {
+                error: error.message,
+                stack: error.stack
+            });
+            
+            if (debugMode) {
+                console.error("🔌 Erro de conexão:", error);
+            }
+            
+            alert("🔌 Falha na conexão com o Discord.\nVerifique sua internet e tente novamente.");
+        });
+        
+    } catch (error) {
+        logError('DISCORD_UNEXPECTED', 'Erro inesperado na exportação', {
+            error: error.message,
+            stack: error.stack
+        });
+        
+        if (debugMode) {
+            console.error('💥 Erro inesperado:', error);
+        }
+        
+        alert('💥 Erro inesperado na exportação.\nConsulte o painel de debug para mais detalhes.');
+    }
+}
+
+// 🖱️ FUNCIONALIDADE DE GIRAR COM MOUSE (ARRASTAR)
+let isDragging = false;
+let startAngle = 0;
+let dragStartAngle = 0;
+let dragSensitivity = 0.01;
+
+function addMouseDragEvents() {
+    const canvas = document.getElementById('wheelCanvas');
+    const fullscreenCanvas = document.getElementById('fullscreenCanvas');
+    
+    [canvas, fullscreenCanvas].forEach(canvasElement => {
+        if (!canvasElement) return;
+        
+        // Mouse events
+        canvasElement.addEventListener('mousedown', handleDragStart);
+        canvasElement.addEventListener('mousemove', handleDragMove);
+        canvasElement.addEventListener('mouseup', handleDragEnd);
+        canvasElement.addEventListener('mouseleave', handleDragEnd);
+        
+        // Touch events for mobile
+        canvasElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvasElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvasElement.addEventListener('touchend', handleDragEnd);
+        
+        // Visual feedback
+        canvasElement.style.cursor = 'grab';
     });
+}
+
+function handleDragStart(e) {
+    if (isSpinning) return;
+    
+    e.preventDefault();
+    isDragging = true;
+    
+    const rect = e.target.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const mouseX = e.clientX - rect.left - centerX;
+    const mouseY = e.clientY - rect.top - centerY;
+    
+    startAngle = Math.atan2(mouseY, mouseX);
+    dragStartAngle = currentRotation;
+    
+    e.target.style.cursor = 'grabbing';
+    
+    if (debugMode) {
+        console.log('🖱️ Iniciando arrasto da roleta');
+    }
+}
+
+function handleTouchStart(e) {
+    if (isSpinning) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousedown', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    handleDragStart({...mouseEvent, target: e.target, preventDefault: () => {}});
+}
+
+function handleDragMove(e) {
+    if (!isDragging || isSpinning) return;
+    
+    e.preventDefault();
+    
+    const rect = e.target.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const mouseX = e.clientX - rect.left - centerX;
+    const mouseY = e.clientY - rect.top - centerY;
+    
+    const currentAngle = Math.atan2(mouseY, mouseX);
+    const angleDiff = currentAngle - startAngle;
+    
+    // Aplicar rotação com sensibilidade ajustada
+    currentRotation = dragStartAngle + (angleDiff * dragSensitivity * 100);
+    
+    // Desenhar a roleta atualizada
+    drawWheel();
+    if (document.getElementById('fullscreenOverlay').classList.contains('show')) {
+        drawFullscreenWheel();
+    }
+}
+
+function handleTouchMove(e) {
+    if (!isDragging || isSpinning) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousemove', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    handleDragMove({...mouseEvent, target: e.target, preventDefault: () => {}});
+}
+
+function handleDragEnd(e) {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    startAngle = 0;
+    dragStartAngle = 0;
+    
+    e.target.style.cursor = 'grab';
+    
+    if (debugMode) {
+        console.log('🖱️ Finalizando arrasto da roleta');
+    }
 }
 
 // CSS dinâmico
@@ -1192,6 +2153,222 @@ style.textContent = `
         0% { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3)); }
         50% { filter: drop-shadow(0 0 60px rgba(74, 85, 104, 0.8)); }
         100% { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3)); }
+    }
+    
+    /* 🛠️ ESTILOS DO PAINEL DE DEBUG */
+    .debug-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        border: 2px solid #4a5568;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .debug-header {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #718096;
+    }
+    
+    .debug-header h3 {
+        margin: 0;
+        color: #f7fafc;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .debug-header button {
+        background: #e53e3e;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.2s ease;
+    }
+    
+    .debug-header button:hover {
+        background: #c53030;
+        transform: scale(1.1);
+    }
+    
+    .debug-content {
+        padding: 20px;
+        max-height: calc(80vh - 80px);
+        overflow-y: auto;
+        color: #e2e8f0;
+    }
+    
+    .debug-section {
+        margin-bottom: 25px;
+        padding: 15px;
+        background: rgba(74, 85, 104, 0.2);
+        border-radius: 10px;
+        border-left: 4px solid #4a5568;
+    }
+    
+    .debug-section h4 {
+        margin: 0 0 15px 0;
+        color: #f7fafc;
+        font-size: 16px;
+        font-weight: bold;
+        border-bottom: 1px solid #718096;
+        padding-bottom: 8px;
+    }
+    
+    .debug-section label {
+        display: block;
+        margin-bottom: 8px;
+        color: #cbd5e0;
+        font-weight: 500;
+    }
+    
+    .debug-section select,
+    .debug-section input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        background: #1a202c;
+        border: 1px solid #4a5568;
+        border-radius: 8px;
+        color: #f7fafc;
+        font-size: 14px;
+        margin-bottom: 10px;
+        transition: border-color 0.2s ease;
+    }
+    
+    .debug-section select:focus,
+    .debug-section input[type="text"]:focus {
+        outline: none;
+        border-color: #63b3ed;
+        box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+    }
+    
+    .debug-btn {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        color: #f7fafc;
+        border: 1px solid #718096;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        margin: 5px 5px 5px 0;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+    
+    .debug-btn:hover {
+        background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .debug-btn.danger {
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        border-color: #fc8181;
+    }
+    
+    .debug-btn.danger:hover {
+        background: linear-gradient(135deg, #c53030 0%, #9c2626 100%);
+    }
+    
+    .debug-btn.warning {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        border-color: #f6ad55;
+    }
+    
+    .debug-btn.warning:hover {
+        background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+    }
+    
+    .debug-info p {
+        margin: 8px 0;
+        padding: 8px;
+        background: rgba(26, 32, 44, 0.5);
+        border-radius: 6px;
+        font-size: 14px;
+        border-left: 3px solid #4a5568;
+    }
+    
+    .debug-info strong {
+        color: #63b3ed;
+    }
+    
+    /* Scrollbar personalizada */
+    .debug-content::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .debug-content::-webkit-scrollbar-track {
+        background: #1a202c;
+        border-radius: 4px;
+    }
+    
+    .debug-content::-webkit-scrollbar-thumb {
+        background: #4a5568;
+        border-radius: 4px;
+    }
+    
+    .debug-content::-webkit-scrollbar-thumb:hover {
+        background: #718096;
+    }
+    
+    /* Animação de entrada */
+    .debug-panel {
+        animation: debugPanelEntry 0.3s ease-out;
+    }
+    
+    @keyframes debugPanelEntry {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+    
+    /* 👤 Estilo para exibição do próximo colaborador */
+    #nextEmployeeDisplay {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: #ffffff !important;
+        font-weight: bold;
+        font-size: 18px !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        padding: 12px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        display: inline-block;
+        border: 2px solid #68d391;
+        margin: 10px 0;
+    }
+    
+    /* 🎮 Botões da tela cheia */
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed !important;
+        transform: none !important;
+    }
+    
+    button:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
 `;
 document.head.appendChild(style);

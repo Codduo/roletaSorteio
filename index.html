@@ -32,7 +32,7 @@
     <div class="container">
         <div class="header">
             <div class="logo-area">
-                <img src="logo.png" class="logo-placeholder"></img>
+                <img src="assets/logo.png" class="logo-placeholder"></img>
                 <div>
                     <div class="company-title">BMZ</div>
                     <div class="subtitle">🎯 Roleta de Sorteio do operacional</div>
@@ -49,6 +49,22 @@
             </div>
 
             <div class="tab-content active" id="employees-tab">
+                <div style="margin-bottom: 15px; text-align: center;">
+                    <div style="margin-bottom: 10px;">
+                        <label style="color: #e2e8f0; font-size: 14px; margin-right: 10px;">Ordem dos Colaboradores:</label>
+                        <select id="employeeOrderSelect" onchange="changeEmployeeOrder(this.value)" style="background: #2d3748; color: #e2e8f0; border: 1px solid #4a5568; border-radius: 4px; padding: 4px 8px; margin-right: 10px;">
+                            <option value="random">🎲 Aleatório</option>
+                            <option value="alphabetic">📝 Alfabética A-Z</option>
+                            <option value="reverse">📝 Alfabética Z-A</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-add" onclick="selectNextEmployee()" style="background: linear-gradient(45deg, #9f7aea, #805ad5); border: none; margin-right: 10px;">
+                        ⏭️ Próximo Colaborador
+                    </button>
+                    <button class="btn btn-add" onclick="openFullscreenManual()" style="background: linear-gradient(45deg, #4299e1, #3182ce); border: none;">
+                        🔍 Tela Cheia
+                    </button>
+                </div>
                 <div class="employee-grid" id="employeeGrid"></div>
             </div>
 
@@ -121,12 +137,24 @@
         <div class="fullscreen-content">
             <div class="fullscreen-title" id="fullscreenTitle">🎯 ROLETA BMZ 🎯</div>
             
+            <div id="nextEmployeeDisplay" style="text-align: center; margin-bottom: 15px; display: none;"></div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="selectNextEmployee()" style="background: linear-gradient(45deg, #9f7aea, #805ad5); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-right: 15px; font-size: 14px;">
+                    ⏭️ Próximo
+                </button>
+                <button onclick="spinWheel()" id="fullscreenSpinBtn" style="background: linear-gradient(45deg, #48bb78, #38a169); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                    🎯 Girar
+                </button>
+            </div>
+            
             <div class="fullscreen-wheel-wrapper">
                 <div class="fullscreen-pointer"></div>
                 <canvas id="fullscreenCanvas" width="500" height="500"></canvas>
             </div>
 
             <div class="fullscreen-result" id="fullscreenResult">
+                <button onclick="hideResult()" style="position: absolute; top: 15px; right: 15px; background: #e53e3e; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 1000;">×</button>
                 <h2>🏆 VENCEDOR! 🏆</h2>
                 <img id="fullscreenWinnerPhoto" class="fullscreen-winner-photo" alt="Foto do vencedor">
                 <div class="fullscreen-winner-name" id="fullscreenWinnerName"></div>
